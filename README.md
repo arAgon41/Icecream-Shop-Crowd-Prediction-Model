@@ -2,7 +2,8 @@
 Machine learning model created to predict the crowd levels at an average ice cream shop given features like time, day, month, temperature, etc. 
 The goal is to create a dashboard that can be used to help small ice cream shops predict crowd levels better so that they have a sufficient amount of supplies on any given day.
 
-We will be using features like, weather, month, day, hour, temperature, cloudcover to predict the amount of crowd in a typical ice cream shop.
+# Steps I will be taking
+I will be using features like, weather, month, day, hour, temperature, cloudcover to predict the amount of crowd in a typical ice cream shop.
 To do this we will need to:
 1. Input past weather details into a dataset
 2. Columns = Month, Day, Hour, Sunny or Not(0 or 1), Cloudcover, temperature, weekend(0 or 1).
@@ -10,3 +11,23 @@ To do this we will need to:
 4. Next we will standardize the data to ensure that the model doesn't give more importance to 1 feature over the other.
 5. We will then train the model, and predict the crowd on a day that was not tested.
 6. Finally we will deploy the model on a streamlit based application for easier interactibility.
+
+# Dataset
+Weather data was inputted using API
+Crowd levels were calculated using visual observations, and guesstimates.
+
+# Files
+icecreamCrowd.csv - created data set consisting of all features
+Display.py - consists of code to run the UI of the model, and generates charts to predict the crowd throughout the day.
+IcecreamCrowdGen - Generates the sample dataset for ice cream shop crowds
+IceCreamShopCrowdPrediction.py - Standardizes the data, and trains the model to predict values
+
+# Tech Stack
+Python
+Scikit-learn
+Pandas
+NumPy
+Streamlit
+
+# Contact
+Riswanth Haris Sundaresh Babu - rishi.sundaresh@gmail.com/412-445-8527
