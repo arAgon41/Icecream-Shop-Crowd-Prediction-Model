@@ -17,17 +17,17 @@ Weather data was inputted using API
 Crowd levels were calculated using visual observations, and guesstimates.
 
 # Files
-icecreamCrowd.csv - created data set consisting of all features
-Display.py - consists of code to run the UI of the model, and generates charts to predict the crowd throughout the day.
-IcecreamCrowdGen - Generates the sample dataset for ice cream shop crowds
-IceCreamShopCrowdPrediction.py - Standardizes the data, and trains the model to predict values
+icecreamCrowd.csv - created data set consisting of all features  
+Display.py - consists of code to run the UI of the model, and generates charts to predict the crowd throughout the day.  
+IcecreamCrowdGen - Generates the sample dataset for ice cream shop crowds  
+IceCreamShopCrowdPrediction.py - Standardizes the data, and trains the model to predict values  
 
 # Tech Stack
-Python
-Scikit-learn
-Pandas
-NumPy
-Streamlit
+Python  
+Scikit-learn  
+Pandas  
+NumPy  
+Streamlit  
 
 # Contact
 Riswanth Haris Sundaresh Babu - rishi.sundaresh@gmail.com/412-445-8527
