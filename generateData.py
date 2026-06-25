@@ -46,6 +46,32 @@ def fetch_weather_data(start_date, end_date, lat=39.0438, lon=-77.4874)-> pd.Dat
 
     return df
 
+def clean_hours(df):
+    """
+    Cleaning the data by removing rows that fall outside of the specified hours based on the month.
+    Inputs:
+    df: pd.DataFrame
+    Returns:
+    A cleaned data frame with rows outside of the specified hours removed.
+    """
+    cleaned_rows = []
+    for row in df.iterrows():
+        month = row["month"]
+        hour = row["hour"]
+        
+
+        # summer: skip rows past 9 PM
+        if month in [6, 7, 8] and hour >= 21:
+            continue
+
+        # winter: skip rows past 5 PM
+        if month in [12, 1, 2] and hour >= 17:
+            continue
+
+        cleaned_rows.append(row)
+
+    return pd.DataFrame(cleaned_rows)
+
 # Fetch data
 df = fetch_weather_data("2024-06-01", "2026-06-18")
 
