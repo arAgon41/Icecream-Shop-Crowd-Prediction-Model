@@ -12,9 +12,12 @@ To do this we will need to:
 5. We will then train the model, and predict the crowd on a day that was not tested.
 6. Finally we will deploy the model on a streamlit based application for easier interactibility.
 
+# Limitations
+Due to not having access to real foot traffic data of any ice cream shop, we are creating a simulation dataset based on assumptions, and few visual observations. We are using python to extrapolate the observations onto the whole dataset while also adding a little bit of variation between the days.
+
 # Dataset
 Weather data was inputted using API
-Crowd levels were calculated using visual observations, and guesstimates.
+Crowd levels were calculated using visual observations, and assumption based point system to calculate foot traffic. 
 
 # Files
 icecreamCrowd.csv - created data set consisting of all features  
@@ -27,7 +30,14 @@ Python
 Scikit-learn  
 Pandas  
 NumPy  
-Streamlit  
+Streamlit
+
+# Further improvements
+Since the main goal of this project is to predict the foot traffic at a location, we are able to do this for any locations as long as data is inputted for the particular location. To increase accuracy even more, we can add even more features like: nearbyevents, holiday_or_not, etc.
+Using real world data would allow us to predict foot traffic for a specific location much more accurately rather than using a base average for all locations.
+
+
+We can use real datasets to train a model to be even more accurate based on the specific location. This repo could be used to predict the crowd levels of any location provided data is given to train models.
 
 # Contact
-Riswanth Haris Sundaresh Babu - rishi.sundaresh@gmail.com/412-445-8527
+Riswanth Haris Sundaresh Babu - 
