@@ -106,6 +106,27 @@ def decode_weathercode(code):
         return "Thunderstorm"
     else:
         return "Unknown"
+def get_temperature_modifier(temperature):
+    """
+    Returns a score modifier based on temperature in Celsius.
+    Sweet spot is 22-28C (72-82F), peak ice cream weather.
+    Cold temperatures below 10 degrees Celcius = negative modifiers
+    Warm temperatures = low positive integers
+    Hot outside? = HIGH POSITIVE MODIFIERS
+    """
+    if temperature >= 28:
+        return 0.15
+    elif temperature >= 22:
+        return 0.10
+    elif temperature >= 17:
+        return 0.03
+    elif temperature >= 10:
+        return -0.03
+    elif temperature >= 5:
+        return -0.07
+    else:
+        return -0.10
+
 # Fetch data
 df = fetch_weather_data("2024-06-01", "2026-06-18")
 
