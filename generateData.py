@@ -127,6 +127,42 @@ def get_temperature_modifier(temperature):
     else:
         return -0.10
 
+
+def get_hour_modifier(hour, month):
+    """
+    Returns a score modifier based on the hour of day.
+    Input: Hour and month
+    Output: modifier 
+    Since the shops normally have different open and close times throughout the year we will be taking into account the month. 
+    If it is summer the shop opens earlier than normal. 
+    Depending on this, we will then be able to calculate the modifier and reutrn it.
+    
+    Based on a normal average pattern.
+    Morning = low time
+    Hour after Open = Crowd Starts increasing
+    Noon = average
+    afternoon = Peak time
+    evening = Decreasing numbers but still high
+    Night = Lowers
+    """
+    if month in [6, 7, 8]:
+        opening_hour = 10
+    else:
+        opening_hour = 11
+
+    if hour >= 15 and hour <= 18:
+        return 0.12
+    elif hour >= 13 and hour < 15:
+        return 0.08
+    elif hour >= 19 and hour < 21:
+        return 0.05
+    elif hour == opening_hour:
+        return -0.05
+    elif hour == opening_hour + 1:
+        return 0.0
+    else:
+        return 0.02
+
 # Fetch data
 df = fetch_weather_data("2024-06-01", "2026-06-18")
 
