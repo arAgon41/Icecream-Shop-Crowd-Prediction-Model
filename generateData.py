@@ -2,6 +2,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
+import numpy as np
 
 def fetch_weather_data(start_date, end_date, lat=39.0438, lon=-77.4874)-> pd.DataFrame:
     """
@@ -53,6 +54,7 @@ def clean_hours(df):
     IF its summer the closing hour is 9pm .
     IF its winter the closing hour is 5pm
     for fall/spring months we close at 7pm
+    
 
     """
     cleaned_rows = []
@@ -61,13 +63,16 @@ def clean_hours(df):
         hour  = df["hour"][i]
 
         if month in [6, 7, 8]:
+            open_hour = 10
             close_hour = 21
         elif month in [12, 1, 2]:
+            open_hour = 11
             close_hour = 17
         else:
+            open_hour = 11
             close_hour = 19
 
-        if hour < 11 or hour >= close_hour:
+        if hour < open_hour or hour >= close_hour:
             continue
 
         cleaned_rows.append(df.iloc[i])
