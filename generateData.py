@@ -54,7 +54,7 @@ def clean_hours(df):
     IF its summer the closing hour is 9pm .
     IF its winter the closing hour is 5pm
     for fall/spring months we close at 7pm
-    
+
 
     """
     cleaned_rows = []
@@ -192,7 +192,7 @@ def get_hour_modifier(hour, month):
 def generate_crowd_level(df):
     """
     Generates a crowd level score between 0 and 1 for each row using:
-    - A base score from the month (season)
+    - A base score from each (MONTH_BASE)
     - Modifiers added for temperature, hour of day, and weekend
     - A multiplier based on weather condition, applied to the WHOLE score
       so severe weather suppresses everything, not just the seasonal base.
@@ -215,36 +215,33 @@ def generate_crowd_level(df):
         hour = df["hour"][i]
         weekend = df["weekend"][i]
 
-        # --- Base score from month ---
+        # ----------------- Base score from month -----------------
         score = MONTH_BASE[month]
-        # --- Temperature modifier ---
+        # ----------------- Temperature modifier -----------------
         score += get_temperature_modifier(temperature)
-        # --- Hour modifier ---
+        # ----------------- Hour modifier -----------------
         score += get_hour_modifier(hour,month)
-        # --- Weekend modifier ---
+        # ----------------- Weekend modifier -----------------
         if weekend == 1:
             score += 0.10
         else:
             score -= 0.03
 
-        # Ensure score is between 0 and 1 
+        # Locking Score between 0 and 1 before considering weather to ensure we dont get strange numbers.
         if score < 0.0:
             score = 0.0
         if score > 1.0:
             score = 1.0
 
-        # --- Weather multiplier applied to the WHOLE score ---
-        # This is the key fix: severe weather suppresses everything,
-        # not just the seasonal base. A thunderstorm during peak rush hour
-        # in July should still end up very low, not just "less high".
+        # ----------------- Weather multiplier applied to the WHOLE score -----------------
         multiplier = WEATHER_MULTIPLIERS.get(weather, 0.70)
         score = score * multiplier
 
-        # --- Random noise (0 to 0.05) to simulate natural variation ---
+        # ----------------- Random noise (0 to 0.05) to simulate natural variation -----------------
         noise = np.random.uniform(0, 0.05)
         score += noise
 
-        # --- Final clip between 0 and 1 ---
+        # ----------------- Final clip between 0 and 1 -----------------
         if score > 1.0:
             score = 1.0
         if score < 0.0:
@@ -255,18 +252,17 @@ def generate_crowd_level(df):
     df["crowd_level"] = crowd_scores
     return df
 
-# Fetch data
 df = fetch_weather_data("2024-06-01", "2026-06-18")
-weather_labels = []
 
-for i in range(len(df)):
-    code = df["weathercode"][i]
-    label = decode_weathercode(code)
-    weather_labels.append(label)
+df = clean_hours(df).reset_index(drop=True)
 
-df["weather"] = weather_labels
+# 3. Decode weather codes into readable labels
+df["weather"] = [decode_weathercode(code) for code in df["weathercode"]]
 
-# Save to CSV
+# 4. Generate synthetic crowd levels
+df = generate_crowd_level(df)
+
+# 5. Save final dataset
 df.to_csv("weather_dataset.csv", index=False)
 
 print("Dataset created successfully!")
