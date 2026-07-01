@@ -253,18 +253,15 @@ def generate_crowd_level(df):
     return df
 
 df = fetch_weather_data("2024-06-01", "2026-06-18")
-
-df = clean_hours(df).reset_index(drop=True)
-
-# 3. Decode weather codes into readable labels
-df["weather"] = [decode_weathercode(code) for code in df["weathercode"]]
-
-# 4. Generate synthetic crowd levels
+df = clean_hours(df)
+df = df.reset_index(drop=True)
+weather_list = []
+for code in df["weathercode"]:
+    decoded = decode_weathercode(code)
+    weather_list.append(decoded)
+df["weather"] = weather_list
 df = generate_crowd_level(df)
-
-# 5. Save final dataset
 df.to_csv("weather_dataset.csv", index=False)
-
 print("Dataset created successfully!")
 
 
