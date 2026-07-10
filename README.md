@@ -24,6 +24,7 @@ icecreamCrowd.csv - created data set consisting of all features
 Display.py - consists of code to run the UI of the model, and generates charts to predict the crowd throughout the day.  
 IcecreamCrowdGen - Generates the sample dataset for ice cream shop crowds  
 IceCreamShopCrowdPrediction.py - Standardizes the data, and trains the model to predict values  
+ShopDataSetSampleAnalysis.ipynb - Looking for patterns in the dataset to simulation is good.
 
 # Tech Stack
 Python  
