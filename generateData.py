@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 
-def fetch_weather_data(start_date, end_date, lat=39.0438, lon=-77.4874)-> pd.DataFrame:
+def GatherWeatherData(start_date, end_date, lat=40.4406, lon=-79.9959)-> pd.DataFrame:
     """
     Gather weather data from the OpenMeteo API for a specified time range and location based on the latitude and logitudes values.
     Inputs:
@@ -30,7 +30,7 @@ def fetch_weather_data(start_date, end_date, lat=39.0438, lon=-77.4874)-> pd.Dat
     df = pd.DataFrame({
         "datetime": data["hourly"]["time"],
         "temperature": data["hourly"]["temperature_2m"],
-        "cloudcover": data["hourly"]["cloudcover"],
+        "cloudcover": data["hourly"]["cloudcover"],# unnecessary column
         "weathercode": data["hourly"]["weathercode"]
     })
     df["datetime"] = pd.to_datetime(df["datetime"])
@@ -43,7 +43,7 @@ def fetch_weather_data(start_date, end_date, lat=39.0438, lon=-77.4874)-> pd.Dat
 
     return df
 
-def clean_hours(df):
+def CleanHours(df):
     """
     Cleaning the data by removing rows that fall outside of the specified hours based on the month.
     Inputs:
@@ -79,7 +79,7 @@ def clean_hours(df):
 
     return pd.DataFrame(cleaned_rows)
 
-def decode_weathercode(code):
+def DecodeWeatherCode(code):
     """
     Decoding the codes to weather condition
     Weather codes: https://open-meteo.com/en/docs
@@ -131,7 +131,7 @@ WEATHER_MULTIPLIERS = {
 }
 
 
-def get_temperature_modifier(temperature):
+def GetTemperatureModifier(temperature):
     """
     Returns a score modifier based on temperature in Celsius.
     Sweet spot is 22-28C (72-82F), peak ice cream weather.
@@ -153,7 +153,7 @@ def get_temperature_modifier(temperature):
         return -0.10
 
 
-def get_hour_modifier(hour, month):
+def GetHourModifier(hour, month):
     """
     Since the shops normally have different open and close times throughout the year we will be taking into account the month. 
     If it is summer the shop opens earlier than normal. 
@@ -189,19 +189,13 @@ def get_hour_modifier(hour, month):
         return 0.02
 
 
-def generate_crowd_level(df):
+def GenerateCrowdLevel(df):
     """
     Generates a crowd level score between 0 and 1 for each row using:
-    - A base score from each (MONTH_BASE)
-    - Modifiers added for temperature, hour of day, and weekend
-    - A multiplier based on weather condition, applied to the WHOLE score
-      so severe weather suppresses everything, not just the seasonal base.
-      We are able to make sure a thunderstorm in summer will cause crowd levels to be lower than usual, 
-      whereas a sunny day in winter may have higher crowd levels than normal.
-    - A small amount of random noise to simulate natural variation (random between 0 and 0.05)
+    Loops through the dataframe and calculates the crowd level based on the features.
 
     Input:
-    df: pd.DataFrame with columns month, weather, temperature, hour, weekend
+    df: pd.DataFrame
 
     Output:
     df: same dataframe with a new crowd_level column added
@@ -215,13 +209,13 @@ def generate_crowd_level(df):
         hour = df["hour"][i]
         weekend = df["weekend"][i]
 
-        # ----------------- Base score from month -----------------
+        # Base month score
         score = MONTH_BASE[month]
-        # ----------------- Temperature modifier -----------------
-        score += get_temperature_modifier(temperature)
-        # ----------------- Hour modifier -----------------
-        score += get_hour_modifier(hour,month)
-        # ----------------- Weekend modifier -----------------
+        # temperature modifier
+        score += GetTemperatureModifier(temperature)
+        # hour modifier
+        score += GetHourModifier(hour,month)
+        # weekend modifier
         if weekend == 1:
             score += 0.10
         else:
@@ -233,15 +227,15 @@ def generate_crowd_level(df):
         if score > 1.0:
             score = 1.0
 
-        # ----------------- Weather multiplier applied to the WHOLE score -----------------
+        # weather multiplier
         multiplier = WEATHER_MULTIPLIERS.get(weather, 0.70)
         score = score * multiplier
 
-        # ----------------- Random noise (0 to 0.05) to simulate natural variation -----------------
+        # creating small degree of natural variance
         noise = np.random.uniform(0, 0.05)
         score += noise
 
-        # ----------------- Final clip between 0 and 1 -----------------
+        # keep it between 0 and 1
         if score > 1.0:
             score = 1.0
         if score < 0.0:
@@ -252,16 +246,16 @@ def generate_crowd_level(df):
     df["crowd_level"] = crowd_scores
     return df
 
-df = fetch_weather_data("2024-06-01", "2026-06-18")
-df = clean_hours(df)
+df = GatherWeatherData("2024-06-01", "2026-06-18")
+df = CleanHours(df)
 df = df.reset_index(drop=True)
 weather_list = []
 for code in df["weathercode"]:
-    decoded = decode_weathercode(code)
+    decoded = DecodeWeatherCode(code)
     weather_list.append(decoded)
 df["weather"] = weather_list
-df = generate_crowd_level(df)
-df.to_csv("weather_dataset.csv", index=False)
-print("Dataset created successfully!")
+df = GenerateCrowdLevel(df)
+df.to_csv("pittsburgh_weather.csv", index=False)
+print("Data created")
 
 
