@@ -4,12 +4,15 @@ import joblib
 import requests
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+import os
 
 @st.cache_resource
 def LoadModel(modelPath : str):
     """
     Loads trained model from path 
     """
+    basePath = os.path.dirname(__file__)
+    modelPath = os.path.join(basePath, modelPath)
     return joblib.load(modelPath)
 
 model = LoadModel("../models/CrowdLevelPredictionModel.pkl")
