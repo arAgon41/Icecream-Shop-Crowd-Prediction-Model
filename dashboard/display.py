@@ -27,27 +27,27 @@ def DecodeWeather(code: int) -> str:
     1. innput the weather code
     2. go through condition statements and return the weather
     """
-    if code == 0: 
+    if code == 0:
         return "Clear"
-    elif code == 1: 
+    elif code == 1:
         return "Mostly Clear"
-    elif code == 2: 
+    elif code == 2:
         return "Partly Cloudy"
-    elif code == 3: 
+    elif code == 3:
         return "Overcast"
-    elif code in [45, 48]: 
-        return "Overcast"
-    elif code in [51, 53, 55]: 
+    elif code in [45, 48]:
+        return "Foggy"
+    elif code in [51, 53, 55]:
         return "Drizzle"
-    elif code in [61, 63, 65]: 
+    elif code in [61, 63, 65]:
         return "Rain"
-    elif code in [71, 73, 75]: 
+    elif code in [71, 73, 75]:
         return "Snow"
-    elif code in [80, 81, 82]: 
-        return "Rain"
-    elif code in [95, 96, 99]: 
-        return "Rain"
-    return "Clear"
+    elif code in [80, 81, 82]:
+        return "Rain Showers"
+    elif code in [95, 96, 99]:
+        return "Thunderstorm"
+    return "Unknown"
 
 
 def FetchWeather(selectedDate):
