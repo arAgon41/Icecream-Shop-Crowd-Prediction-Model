@@ -73,7 +73,7 @@ def FetchWeather(selectedDate):
     df = pd.DataFrame({
         "time": hourly["time"],
         "temperature": hourly["temperature_2m"],
-        "weathercode": hourly["weather_code"]  # keep old name
+        "weathercode": hourly["weather_code"]
     })
 
     df["hour"] = pd.to_datetime(df["time"]).dt.hour
@@ -185,14 +185,13 @@ with center[1]:
 if st.button("Predict Crowd Level"):
 
     rawDF= FetchWeather(selectedDate)
-
+    if rawDF.empty:
+        st.error("Not able to fetch data for this day. Please Try again later!")
+        st.stop()
+        
     month = selectedDate.month
     validHours = get_valid_hours(month)
     rawDF = rawDF[rawDF["hour"].isin(validHours)]
-
-    if rawDF.empty:
-        st.error("No valid prediction hours for this date.")
-        st.stop()
 
     modelDF = BuildModelFeatures(rawDF)
     preds = model.predict(modelDF)
