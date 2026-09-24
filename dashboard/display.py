@@ -49,7 +49,7 @@ def DecodeWeather(code: int) -> str:
         return "Thunderstorm"
     return "Unknown"
 
-
+@st.cache_data(ttl=86400)
 def FetchWeather(selectedDate):
 
     url = (
