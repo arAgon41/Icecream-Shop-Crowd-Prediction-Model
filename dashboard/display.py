@@ -51,39 +51,40 @@ def DecodeWeather(code: int) -> str:
 
 
 def FetchWeather(selectedDate):
-    """
-    1. retrieving future weather data from openmeteo
-    2. creating a human readable weather column
-    3. creating ML features
 
-    """
     url = (
         "https://api.open-meteo.com/v1/forecast?"
-        "latitude=40.4406&longitude=-79.9959&hourly=temperature_2m,weathercode"
-        f"&start_date={selectedDate}&end_date={selectedDate}"
+        "latitude=40.4406"
+        "&longitude=-79.9959"
+        "&hourly=temperature_2m,weather_code"
+        f"&start_date={selectedDate}"
+        f"&end_date={selectedDate}"
     )
 
-    raw = requests.get(url).json()
+    response = requests.get(url)
+    raw = response.json()
+
+    if "hourly" not in raw:
+        st.error(f"Weather API Error: {raw}")
+        return pd.DataFrame()
+
     hourly = raw["hourly"]
 
     df = pd.DataFrame({
         "time": hourly["time"],
         "temperature": hourly["temperature_2m"],
-        "weathercode": hourly["weathercode"]
+        "weathercode": hourly["weather_code"]  # keep old name
     })
 
     df["hour"] = pd.to_datetime(df["time"]).dt.hour
     df["month"] = selectedDate.month
     df["date"] = selectedDate
 
-    # Human readable weather
     df["weather"] = df["weathercode"].apply(DecodeWeather)
 
-    # weekend flag
     dayName = selectedDate.strftime("%A")
     df["weekend"] = int(dayName in ["Saturday", "Sunday"])
 
-    # sunny flag
     df["sunny"] = (df["weathercode"] == 0).astype(int)
 
     return df
@@ -169,10 +170,7 @@ def get_valid_hours(month : int) -> list:
     return list(range(11, 18))
 
 # UI
-"""
-Stream lit UI created
-features a chart and table with all data needed to make predictions
-"""
+
 st.set_page_config(layout="wide")
 
 st.title("🍦 Ice Cream Shop Crowd Predictor")
