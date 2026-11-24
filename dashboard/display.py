@@ -206,7 +206,5 @@ if st.button("Predict Crowd Level"):
 
     with col2:
         st.subheader("Crowd Chart")
-        fig = PlotPredictionChart(userDF)
-        st.pyplot(fig)
-        plt.close(fig)
+        st.line_chart(userDF.set_index("Hour")["Prediction"],color = "#FF4B4B", x_label = "Hour", y_label = "Crowd Level(0-1)")
     st.caption("⚠️ Prediction are based on weather forecasts and will change as the weather changes! Please check back for updates!!!")
