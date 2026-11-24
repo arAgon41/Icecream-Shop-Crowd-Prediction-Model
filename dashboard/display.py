@@ -192,7 +192,9 @@ if st.button("Predict Crowd Level"):
     month = selectedDate.month
     validHours = get_valid_hours(month)
     rawDF = rawDF[rawDF["hour"].isin(validHours)]
-
+    if rawDF.empty:
+        st.warning("Forecast not available for this day")
+        st.stop()
     modelDF = BuildModelFeatures(rawDF)
     preds = model.predict(modelDF)
     userDF = BuildUserTable(rawDF, preds)
@@ -206,5 +208,5 @@ if st.button("Predict Crowd Level"):
         st.subheader("Crowd Chart")
         fig = PlotPredictionChart(userDF)
         st.pyplot(fig)
-
+        plt.close(fig)
     st.caption("⚠️ Prediction are based on weather forecasts and will change as the weather changes! Please check back for updates!!!")
